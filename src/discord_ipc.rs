@@ -111,8 +111,11 @@ pub trait DiscordIpc {
         let data_string = data.to_string();
         let header = pack(opcode.into(), data_string.len() as u32)?;
 
-        self.write(&header)?;
-        self.write(data_string.as_bytes())?;
+        let mut buffer = Vec::new();
+        buffer.extend_from_slice(&header);
+        buffer.extend_from_slice(data_string.as_bytes());
+
+        self.write(&buffer)?;
 
         Ok(())
     }
